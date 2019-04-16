@@ -1,0 +1,16 @@
+;
+; tentative: global NES related defines
+;
+
+PPU_CTRL			= $2000
+PPU_MASK			= $2001
+PPU_STATUS			= $2002
+PPU_OAM_ADDR	   	= $2003
+PPU_OAM_DATA		= $2004
+PPU_SCROLL			= $2005
+PPU_ADDR			= $2006
+PPU_DATA			= $2007
+PPU_OAM_DMA			= $4014
+DMC_FREQ			= $4010
+CTRL_PORT1			= $4016
+CTRL_PORT2			= $4017
