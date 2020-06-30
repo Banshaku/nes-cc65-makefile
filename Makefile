@@ -1,7 +1,9 @@
 #
 # Basic makefile that compile the runtime and project files in src folder
 # Author: Banshaku
-# Version 0.9.5:
+# Version 0.9.6:
+#  - 2020-06-08
+#    + fixed issue with recursive subfolders
 #  - 2018-09-18
 #    + decided to add revision history 
 #    + Jarhmander fixed issue with deps. now uses CL instead
@@ -68,16 +70,20 @@ DATA_DIR = data
 SRC_DIR = src
 RUNTIME_BUILD_DIR = build_runtime
 
+###################
+# recursive wildcard
+rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+
 ##################
 # List of dir, mostly used for include path
-SRC_DIR_LIST  := $(SRC_DIR) $(sort $(dir $(wildcard $(SRC_DIR)/**/*/)))
-LIB_DIR_LIST  := $(LIB_DIR) $(sort $(dir $(wildcard $(LIB_DIR)/**/*/)))
-DATA_DIR_LIST := $(DATA_DIR) $(sort $(dir $(wildcard $(DATA_DIR)/**/*/)))
+SRC_DIR_LIST  := $(addprefix -I ,$(sort $(dir  $(call rwildcard,$(SRC_DIR),*))))
+LIB_DIR_LIST  := $(addprefix -I ,$(sort $(dir  $(call rwildcard,$(LIB_DIR),*))))
+DATA_DIR_LIST := $(addprefix -I ,$(sort $(dir  $(call rwildcard,$(DATA_DIR),*))))
 
 ##################
 # Target files related 
-C_FILES := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/**/*.c)
-S_FILES := $(wildcard $(SRC_DIR)/*.s) $(wildcard $(SRC_DIR)/**/*.s)
+C_FILES := $(call rwildcard,$(SRC_DIR),*.c)
+S_FILES := $(call rwildcard,$(SRC_DIR),*.s)
 C_OBJ_FILES := $(addprefix $(BUILD_DIR)/, $(C_FILES:.c=.o))
 S_OBJ_FILES := $(addprefix $(BUILD_DIR)/, $(S_FILES:.s=.o))
 OBJ_FILES := $(C_OBJ_FILES) $(S_OBJ_FILES)
